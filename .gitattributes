@@ -1,8 +1,8 @@
-*.mgi filter=lfs diff=lfs merge=lfs -text
 *.fa.gz filter=lfs diff=lfs merge=lfs -text
+*.mgi filter=lfs diff=lfs merge=lfs -text
 tblbc.csv filter=lfs diff=lfs merge=lfs -text
-ASV_unstacked_percentage.txt filter=lfs diff=lfs merge=lfs -text
 ASV_unstacked_relabund.txt filter=lfs diff=lfs merge=lfs -text
+ASV_unstacked_percentage.txt filter=lfs diff=lfs merge=lfs -text
 ASV_unstacked.txt filter=lfs diff=lfs merge=lfs -text
 Genus_percentage_dada2.txt filter=lfs diff=lfs merge=lfs -text
 Genus_dada2.txt filter=lfs diff=lfs merge=lfs -text
