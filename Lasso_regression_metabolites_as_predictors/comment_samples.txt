@@ -1,0 +1,42 @@
+dsSampleCode	housing	comment
+KP_Exp_14_D11_AVN_PM1	single	Recovered
+KP_Exp_14_D11_AVN_PM3	single	NonRecovered
+KP_Exp_14_D11_AVN_PM4	single	NonRecovered
+KP_Exp_14_D11_AVN_PM5	single	Recovered
+KP_Exp_14_D11_AVN2	single	
+KP_Exp_14_D11_AVN3	single	
+KP_Exp_14_D11_AVN5	single	
+KP_Exp_14_D11_C1	single	
+KP_Exp_14_D11_C2	single	
+KP_Exp_14_D11_C3	single	
+KP_Exp_14_D11_C4	single	
+KP_Exp_14_D11_C5	single	
+KP_Exp_15_D11_AVN_PM1	single	Recovered
+KP_Exp_15_D11_AVN_PM2	single	NonRecovered
+KP_Exp_15_D11_AVN_PM3	single	NonRecovered
+KP_Exp_15_D11_AVN_PM4	single	Recovered
+KP_Exp_15_D11_AVN_PM5	single	NonRecovered
+KP_Exp_15_D11_AVN1	single	
+KP_Exp_15_D11_AVN2	single	
+KP_Exp_15_D11_AVN3	single	
+KP_Exp_15_D11_AVN4	single	
+KP_Exp_15_D11_AVN5	single	
+KP_Exp_15_D11_C1	single	
+KP_Exp_15_D11_C2	single	
+KP_Exp_15_D11_C3	single	
+KP_Exp_15_D11_C4	single	
+KP_Exp_16_D11_AVN_PM1	single	NonRecovered
+KP_Exp_16_D11_AVN_PM10	single	NonRecovered
+KP_Exp_16_D11_AVN_PM5	single	NonRecovered
+KP_Exp_16_D11_AVN_PM7	single	NonRecovered
+KP_Exp_16_D11_AVN_PM8	single	Recovered
+KP_Exp_16_D11_AVN_PM9	single	NonRecovered
+KP_Exp_16_D11_AVN2	single	
+KP_Exp_16_D11_AVN3	single	
+KP_Exp_16_D11_AVN4	single	
+KP_Exp_16_D11_AVN5	single	
+KP_Exp_16_D11_C1	single	
+KP_Exp_16_D11_C2	single	
+KP_Exp_16_D11_C3	single	
+KP_Exp_16_D11_C4	single	
+KP_Exp_16_D11_C5	single	
