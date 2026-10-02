@@ -17,15 +17,36 @@ end
 
 % Each EPS is a separate, square panel with its own legend or color scale.
 for view=1:2
-    fig=figure('Color','w','Units','inches','Position',[1 1 7.8 5.8]);
+    fig=figure('Color',style.backgroundColor, ...
+        'Units','inches','Position',[1 1 7.8 5.8]);
     ax=axes(fig);
+    ax.Color=style.backgroundColor;
     hold(ax,'on');
     if view==1
         h=gobjects(numel(style.groups),1);
         for g=1:numel(style.groups)
             use=mice.Group==style.groups(g) & ~responder;
-            h(g)=scatter(ax,xy(use,1),xy(use,2),style.pointSize, ...
-                style.colors(g,:),'filled','MarkerEdgeColor','k','LineWidth',0.4);
+            if style.borderSize(g)>0
+                % Bordered groups: AVN+FMT and Recovery.
+                % borderSize(g) is now a LineWidth (points), not an area delta.
+                h(g)=scatter(ax, ...
+                    xy(use,1),xy(use,2), ...
+                    style.pointSize, ...
+                    style.colors(g,:), ...
+                    'filled', ...
+                    'Marker','o', ...
+                    'MarkerEdgeColor',style.borderColor, ...
+                    'LineWidth',style.borderSize(g));
+            else
+                % Normal groups: no border.
+                h(g)=scatter(ax, ...
+                    xy(use,1),xy(use,2), ...
+                    style.pointSize, ...
+                    style.colors(g,:), ...
+                    'filled', ...
+                    'Marker','o', ...
+                    'MarkerEdgeColor','none');
+            end
         end
         labels=style.labels;
         if any(responder)
@@ -37,7 +58,7 @@ for view=1:2
         end
         legend(ax,h,labels,'Location','eastoutside','Box','off', ...
             'Interpreter','none','FontSize',style.fontSize-1);
-        title(ax,'ASV Bray-Curtis PCoA by mouse group','FontWeight','normal');
+        title(ax,'ASV Bray-Curtis PCoA by mouse group','FontWeight','bold');
     else
         scatter(ax,xy(~responder,1),xy(~responder,2),style.pointSize, ...
             mice.IDO1(~responder),'filled','MarkerEdgeColor','k','LineWidth',0.4);
@@ -49,12 +70,13 @@ for view=1:2
         colormap(ax,style.colorMap);
         c=colorbar(ax);
         c.Label.String='Colonic IDO1';
-        title(ax,'Same PCoA colored by colonic IDO1','FontWeight','normal');
+        title(ax,'Same PCoA colored by colonic IDO1','FontWeight','bold');
     end
-    xlabel(ax,sprintf('PCoA1 (%.1f%%)',percent(1)));
-    ylabel(ax,sprintf('PCoA2 (%.1f%%)',percent(2)));
+    xlabel(ax,sprintf('PCoA1 (%.1f%%)',percent(1)),'FontWeight','bold');
+    ylabel(ax,sprintf('PCoA2 (%.1f%%)',percent(2)),'FontWeight','bold');
     axis(ax,'square');
     grid(ax,'on');
+    box(ax,'on');
     % Use identical limits for both views, independent of legend placement.
     span=max(xy)-min(xy);
     xlim(ax,[min(xy(:,1)) max(xy(:,1))]+[-1 1]*0.12*span(1));

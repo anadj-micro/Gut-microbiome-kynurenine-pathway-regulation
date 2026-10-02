@@ -3,9 +3,14 @@ function export_eps(fig,folder,name,fontSize)
 if ~isfolder(folder)
     mkdir(folder);
 end
-set(findall(fig,'Type','axes'),'FontName','Arial','FontSize',fontSize, ...
+ax_all=findall(fig,'Type','axes');
+set(ax_all,'FontName','Arial','FontSize',fontSize, ...
     'Box','off','LineWidth',0.8,'TickDir','out','GridAlpha',0.12);
-set(fig,'Color','w','Renderer','painters','PaperPositionMode','auto');
+for k=1:numel(ax_all)   % <-- CHANGED (new loop: manual 4-sided border, no mirrored ticks)
+    a=ax_all(k);
+    rectangle(a,'Position',[a.XLim(1) a.YLim(1) diff(a.XLim) diff(a.YLim)], ...
+        'EdgeColor','k','LineWidth',0.8);
+end
 drawnow;
-print(fig,fullfile(folder,[char(name) '.eps']),'-depsc','-painters');
+exportgraphics(fig,fullfile(folder,[char(name) '.eps']),'ContentType','vector');   % <-- CHANGED (replaced print/PaperPosition entirely)
 end
