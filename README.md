@@ -11,3 +11,29 @@ The original version of the analyses corresponding to the BioRxiv preprint is pr
 
 For questions, please contact: adjukovic@cipf.es
 
+## Revised workflow entry points
+
+Tested locally with MATLAB R2024b Update 6 on macOS. Run scripts from any
+working folder; each resolves its own inputs and output directories.
+
+- `Figure_and_alloHCT_analyses/plot_figure1.m`: Figure 1/S1 and public human statistics.
+- `RNA_sequencing_data_analysis/rnaseq.m`: revised Figure S2C–D. See that folder's README; requires Bioinformatics Toolbox in addition to Statistics and Machine Learning Toolbox.
+- `redoPcoAsAndCorrelationsFig3and4/plot_figure3.m`: Figure 3C–E and explicitly exploratory diversity displays.
+- `redoPcoAsAndCorrelationsFig3and4/plot_figure4.m`: Figure 4E–I and Figure S5 PCoA.
+- `redoPcoAsAndCorrelationsFig3and4/run_supporting_statistics.m`: Figure S4 load/resolution analysis, recovery and pooled-gavage PERMANOVA/dispersion, family P/q audit, and 36-mouse Pearson sensitivity tests.
+- `Supporting_statistics/run_tissue_cecal_interaction.m`: Figure 5G mixed-model interaction; requires the original specimen-weight form as well as the deposited ion workbook.
+- `Figure_and_alloHCT_analyses/reclassify_human_asvs.R`: classification-generation audit using DADA2 1.40.0 and the mouse SILVA 138.1 reference. Writes separately from frozen manuscript inputs. A fresh seeded run need not be bitwise identical because of classifier tie-breaking.
+
+These scripts do not reproduce every Prism panel or treatment-comparison test.
+Private clinical sensitivity inputs are deliberately excluded from public code.
+P denotes unadjusted tests, Dunnett-adjusted P denotes Prism treatment
+comparisons, and q denotes BH-corrected screens. See subfolder READMEs for
+cohorts, permutations, normalization, and required inputs.
+
+To run the numerical smoke test, add `tests/` to the MATLAB path and call
+`test_revision_workflows`. It recomputes the revised RNA-seq and supporting
+mouse workflows before checking expected statistics. R taxonomy generation is
+a separate audit; frozen assignments remain the manuscript input.
+The tissue interaction is tested only when the separately supplied original
+specimen-weight form is present; otherwise the test reports an explicit skip.
+That form is not included pending approval for public release.
