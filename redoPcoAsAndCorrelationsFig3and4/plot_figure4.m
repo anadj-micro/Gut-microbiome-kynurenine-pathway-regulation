@@ -62,14 +62,41 @@ assert(all(isfinite(d.samples.IDO1)),'Invalid IDO1 normalization.');
 out=fullfile(here,'eps');
 
 %% 5. Styling: same colors for PCoAs and metabolite scatter panels.
+% style.groups=["C","AVN","AVN_K","AVN_P"];
+% style.labels=["Control","AVN","AVN + Klebsiella","AVN + mixture"];
+% style.colors=[.36 .36 .36; .80 .19 .16; .15 .52 .70; .48 .28 .68];
+% style.responderEdge=[.98 .48 .08];
+% style.pointSize=46;
+% style.fontSize=10;
+% style.colorMap=parula(256);
+% style.controlCorner=[1 -1]; % orient controls right/down; axis signs are arbitrary
+% candidateIDs=[888 930 948 69];
+% candidateLabels={'Gamma-tocotrienol','C29:3', ...
+%     sprintf('4a-Carboxy-4b-methyl-5a-\ncholesta-8,24-dien-3b-ol'),'Proline'};
+% candidateColors=[.65 .05 .08; .95 .56 .05; .50 .22 .62; .06 .32 .58];
+
+%% 5. Styling: same colors for PCoAs and metabolite scatter panels.
 style.groups=["C","AVN","AVN_K","AVN_P"];
 style.labels=["Control","AVN","AVN + Klebsiella","AVN + mixture"];
-style.colors=[.36 .36 .36; .80 .19 .16; .15 .52 .70; .48 .28 .68];
-style.responderEdge=[.98 .48 .08];
-style.pointSize=46;
-style.fontSize=10;
+% Group colors (RGB converted from 0–255 to MATLAB 0–1 scale)
+style.colors=[...
+    0/255   0/255   255/255;   % Control: blue
+    255/255 255/255 0/255;     % AVN: yellow
+    255/255 255/255 0/255;     % AVN + Klebsiella: yellow
+    255/255 255/255 0/255];     % AVN + mixture: yellow
+
+style.responderEdge=[255/255   96/255   0/255]; % orange border
+style.pointSize=50;
+style.fontSize=12;
 style.colorMap=parula(256);
 style.controlCorner=[1 -1]; % orient controls right/down; axis signs are arbitrary
+% Plot background: RGB 230,230,230
+style.backgroundColor=[230 230 230]/255;
+% Border color
+style.borderColor=[0 0 0];
+% Border LineWidth (points). 0 = no border.
+% C   AVN   FMT   Recovery   A   V   M   Cp
+style.borderSize=[0; 0; 1; 2; 0; 0; 0; 0];
 candidateIDs=[888 930 948 69];
 candidateLabels={'Gamma-tocotrienol','C29:3', ...
     sprintf('4a-Carboxy-4b-methyl-5a-\ncholesta-8,24-dien-3b-ol'),'Proline'};
@@ -103,11 +130,12 @@ position=zeros(numel(r),1);
 position(order)=1:numel(r);
 
 %% 8. All-ion waterfall with BH-FDR colors and the four selected ions.
-fig=figure('Color','w','Units','inches','Position',[1 1 11.7 5.8]);
+fig=figure('Color','w','Units','inches','Position',[1 1 16 4]);
 ax=axes(fig);
+ax.Color=style.backgroundColor;
 hold(ax,'on');
 masks={qSorted>=.05, qSorted<.05 & rSorted<0, qSorted<.05 & rSorted>0};
-colors=[.76 .76 .76; .10 .43 .70; .82 .20 .16];
+colors=[.3 .3 .3; .10 .43 .70; .82 .20 .16];   % <-- CHANGED (non-significant gray: .76 -> .3, matches connecting-line gray)
 h=gobjects(3,1);
 for k=1:3
     h(k)=scatter(ax,find(masks{k}),rSorted(masks{k}),14,colors(k,:),'filled');
@@ -128,18 +156,18 @@ for k=1:4
     plot(ax,[px tx-10],[r(row) labelY(k)],'-','Color',candidateColors(k,:), ...
         'HandleVisibility','off');
     text(ax,tx,labelY(k),candidateLabels{k},'Interpreter','none', ...
-        'FontSize',9,'Color',candidateColors(k,:),'VerticalAlignment','middle');
+        'FontSize',10,'Color',candidateColors(k,:),'VerticalAlignment','middle');
 end
-xlim(ax,[0 1550]);
+xlim(ax,[0 1330]);
 ylim(ax,[-.82 .89]);
 set(ax,'XTick',[]);
 grid(ax,'on');
 xlabel(ax,'1,106 ions ordered by Pearson correlation');
 ylabel(ax,'Pearson r with normalized colonic IDO1');
-title(ax,sprintf('36 mice; %d of 1,106 ions pass BH-FDR q < 0.05',sum(q<.05)), ...
-    'FontWeight','normal');
+title(ax,{'Associations between stool metabolites and colonic IDO1 levels'}, ...
+    'FontWeight','bold');
 legend(ax,h,{'q >= 0.05','q < 0.05, negative','q < 0.05, positive'}, ...
-    'Location','northwest','Box','off','FontSize',9);
+    'Location','northwest','Box','off','FontSize',10);
 export_eps(fig,out,'fig4E_ion_waterfall',style.fontSize);
 
 %% 9. Four per-mouse correlation plots; triangles retain historical R labels.
@@ -150,34 +178,48 @@ stems=["fig4F_gammaT3","fig4G_C29_3","fig4H_sterol","fig4I_proline"];
 for k=1:4
     row=candidateRows(k);
     y=d.peakArea(:,row)/1000;
-    fig=figure('Color','w','Units','inches','Position',[1 1 6.1 6.2]);
-    ax=axes(fig);
+    fig=figure('Color','w','Units','inches','Position',[1 1 6 6]);
+    ax=axes(fig,'Units','inches','Position',[2 2 2.3 2.3]);   % <-- CHANGED (axes box now exactly 2in x 2in = 5.08cm x 5.08cm, centered in a 6x6in figure)
+    ax.PositionConstraint='innerposition'; 
+    ax.Color=style.backgroundColor;
     hold(ax,'on');
     h=gobjects(5,1);
     for g=1:4
         use=m.Group==style.groups(g) & ~m.Responder;
-        h(g)=scatter(ax,x(use),y(use),style.pointSize,style.colors(g,:), ...
-            'filled','MarkerEdgeColor','k','LineWidth',.45);
+        if style.borderSize(g)>0   % <-- CHANGED (was hardcoded 'k'/.45 for every group)
+            h(g)=scatter(ax,x(use),y(use),style.pointSize,style.colors(g,:), ...
+                'filled','MarkerEdgeColor',style.borderColor,'LineWidth',style.borderSize(g));
+        else
+            h(g)=scatter(ax,x(use),y(use),style.pointSize,style.colors(g,:), ...
+                'filled','MarkerEdgeColor','none');
+        end
     end
     h(5)=scatter(ax,x(m.Responder),y(m.Responder),1.7*style.pointSize, ...
         style.colors(4,:),'^','filled','MarkerEdgeColor',style.responderEdge, ...
-        'LineWidth',1.6);
+        'LineWidth',style.borderSize(4));   % <-- CHANGED (was hardcoded 1.6, now matches AVN+mixture's border width)
     axis(ax,'square');
     grid(ax,'on');
     xlim(ax,[max(0,min(x)-.05*range(x)) max(x)+.08*range(x)]);
     ylim(ax,[max(0,min(y)-.08*range(y)) max(y)+.17*range(y)]);
     xlabel(ax,'Normalized colonic IDO1');
     ylabel(ax,'Normalized peak area (\times10^3)');
-    title(ax,candidateLabels{k},'FontWeight','normal','Interpreter','none');
-    text(ax,.03,.97,sprintf('Pearson r = %.3f; q = %.2g',r(row),q(row)), ...
-        'Units','normalized','VerticalAlignment','top','BackgroundColor','w', ...
-        'Margin',2,'FontSize',style.fontSize);
-    legend(ax,h,[style.labels "AVN+P responder"],'Location','southoutside', ...
-        'NumColumns',2,'Interpreter','none','Box','off','FontSize',9);
+    title(ax,candidateLabels{k},'FontWeight','bold','Interpreter','none');
+    text(ax,.01,.99,sprintf('Pearson r = %.3f; q = %.2g',r(row),q(row)), ...
+        'Units','normalized','VerticalAlignment','top','BackgroundColor','none', ...   % <-- CHANGED ('w' -> style.backgroundColor)
+        'Margin',2,'FontSize',10);
+    lgd=legend(ax,h,[style.labels "AVN+P responder"],'Location','none', ...
+        'NumColumns',5,'Interpreter','none','Box','off','FontSize',10);   % <-- CHANGED (capture handle as lgd)
+    lgd.Units='normalized';   % <-- CHANGED (added)
+    drawnow;   % <-- CHANGED (added, ensures lgd.Position reflects actual rendered width before we reposition)
+    lgd.Position(1)=.5-lgd.Position(3)/2;   % center horizontally (unchanged)
+    lgd.Position(2)=.04;   % <-- CHANGED (fixed distance from figure bottom, no longer derived from ax.Position)
     export_eps(fig,out,stems(k),style.fontSize);
 end
 disp(result.ions(candidateRows,:));
 fprintf('Figure 4/S4: seven EPS files saved in %s\n',out);
+
+
+%% 
 
 function q=bh_fdr(p)
 % Benjamini-Hochberg: sort P values, adjust by number of ions, restore order.

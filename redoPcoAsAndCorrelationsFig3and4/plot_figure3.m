@@ -49,15 +49,44 @@ m=d.samples;
 out=fullfile(here,'eps');
 
 %% 4. Styling: change colors, labels, point size, and font size here.
+% style.groups=["C","AVN","AVN_FMT","AVN_recovery","A","V","M","Cp"];
+% style.labels=["Control","AVN","AVN + FMT","Recovery", ...
+%     "Ampicillin","Vancomycin","Metronidazole","Ciprofloxacin"];
+% style.colors=[.35 .35 .35; .78 .16 .14; .25 .60 .40; .48 .27 .67; ...
+%     .20 .55 .85; .25 .35 .75; .90 .45 .15; .75 .55 .15];
+% style.pointSize=42;
+% style.fontSize=10;
+% style.colorMap=turbo(256);
+% style.controlCorner=[-1 1]; % orient controls left/up; axis signs are arbitrary
+% rawColor=[.45 .45 .45];
+% partialColor=[.10 .45 .70];
+% highlightColors=[.82 .10 .10; .95 .55 .05]; % Lachno, Oscillo
+
+%% 4. Styling: change colors, labels, point size, and font size here.
 style.groups=["C","AVN","AVN_FMT","AVN_recovery","A","V","M","Cp"];
 style.labels=["Control","AVN","AVN + FMT","Recovery", ...
     "Ampicillin","Vancomycin","Metronidazole","Ciprofloxacin"];
-style.colors=[.35 .35 .35; .78 .16 .14; .25 .60 .40; .48 .27 .67; ...
-    .20 .55 .85; .25 .35 .75; .90 .45 .15; .75 .55 .15];
-style.pointSize=42;
-style.fontSize=10;
+% Group colors (RGB converted from 0–255 to MATLAB 0–1 scale)
+style.colors=[...
+    0/255   0/255   255/255;   % Control: blue
+    255/255 255/255 0/255;     % AVN: yellow
+    255/255 255/255 0/255;     % AVN + FMT: yellow
+    255/255 255/255 0/255;     % Recovery: yellow
+    204/255 204/255 41/255;    % Ampicillin
+    153/255 153/255 61/255;    % Vancomycin
+    102/255 102/255 61/255;    % Metronidazole
+    51/255  51/255  41/255];   % Ciprofloxacin
+style.pointSize=100;
+style.fontSize=16;
 style.colorMap=turbo(256);
 style.controlCorner=[-1 1]; % orient controls left/up; axis signs are arbitrary
+% Plot background: RGB 230,230,230
+style.backgroundColor=[230 230 230]/255;
+% Border color
+style.borderColor=[0 0 0];
+% Border LineWidth (points). 0 = no border.
+% C   AVN   FMT   Recovery   A   V   M   Cp
+style.borderSize=[0; 0; 1; 2; 0; 0; 0; 0];
 rawColor=[.45 .45 .45];
 partialColor=[.10 .45 .70];
 highlightColors=[.82 .10 .10; .95 .55 .05]; % Lachno, Oscillo
@@ -91,13 +120,16 @@ result.family=table(names,raw,partial,'VariableNames', ...
     {'Family','RawSpearman','PartialSpearman'});
 
 %% 8. Horizontal connected-dot plot, ordered by partial correlation.
-fig=figure('Color','w','Units','inches','Position',[1 .3 9.3 11.8]);
-ax=axes(fig,'Position',[.43 .10 .53 .85]);
+fig=figure('Color',[230 230 230]/255,'Units','inches','Position',[1 .3 11 20.36]);   % <-- CHANGED (height)
+ax=axes(fig,'Position',[.04 .10 .45 .85]);   % <-- CHANGED (mirrored horizontal position)
+ax.Color=[230 230 230]/255;   % <-- CHANGED (axes background to match)
 hold(ax,'on');
 y=(1:numel(names))';
-change=plot(ax,[raw partial]',[y y]','-','Color',[.8 .8 .8],'LineWidth',.8);
-hRaw=scatter(ax,raw,y,28,rawColor,'filled');
-hPartial=scatter(ax,partial,y,32,partialColor,'filled');
+rawColor=[82 3 252]/255;       % <-- CHANGED (green for raw Spearman)
+partialColor=[3 219 252]/255;   % <-- CHANGED (blue for partial)
+change=plot(ax,[raw partial]',[y y]','-','Color',[.3 .3 .3],'LineWidth',.8);
+hRaw=scatter(ax,raw,y,50,rawColor,'filled');
+hPartial=scatter(ax,partial,y,60,partialColor,'filled');
 for k=1:2
     target=["Lachnospiraceae","Oscillospiraceae"];
     use=names==target(k);
@@ -106,14 +138,16 @@ for k=1:2
 end
 xline(ax,0,'k-','HandleVisibility','off');
 set(ax,'YTick',y,'YTickLabel',strrep(names,'_',' '),'YDir','reverse', ...
-    'TickLabelInterpreter','none','XTick',-1:.2:1);
+    'TickLabelInterpreter','none','XTick',-1:.5:1);
+ax.YAxisLocation='right';   % <-- CHANGED (moves y tick labels to right side)
 xlim(ax,[-1 1]);
 ylim(ax,[0 numel(names)+1]);
+box(ax,'on');   % <-- CHANGED (added)
 xlabel(ax,'Spearman association with colonic IDO1');
 title(ax,{'42-family associations: raw versus', ...
-    'load/experiment-adjusted'},'FontWeight','normal');
+    'load/experiment-adjusted'},'FontWeight','bold');
 legend(ax,[change(1) hRaw hPartial],{'Raw-to-partial change','Raw','Partial'}, ...
-    'Location','southoutside','Orientation','horizontal','Box','off','FontSize',9);
+    'Location','southoutside','Orientation','horizontal','Box','off','FontSize',16);
 export_eps(fig,out,'fig3F_family_raw_partial',style.fontSize);
 
 %% 9. Inverse Simpson: raw and adjusted scatter panels (Figure 3E).
