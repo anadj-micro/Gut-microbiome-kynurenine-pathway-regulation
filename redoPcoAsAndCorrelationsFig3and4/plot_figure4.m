@@ -1,4 +1,4 @@
-% FIGURE 4 E-I and supporting S4A: ion correlations and recolonization PCoA.
+% FIGURE 4 E-I and supporting S5: ion correlations and recolonization PCoA.
 % Open this file in MATLAB and click Run. All inputs are in this folder.
 here=fileparts(mfilename('fullpath'));
 addpath(here);
@@ -104,7 +104,7 @@ candidateColors=[.65 .05 .08; .95 .56 .05; .50 .22 .62; .06 .32 .58];
 
 %% 6. Supplementary PCoA: preserve the saved 43-mouse C/AVN/AVN+P subset.
 % The 48-mouse main cohort includes five additional AVN+K mice. They were
-% not in the saved S4A ordination. Do not relabel this as a 48-mouse panel.
+% not in the saved S5 ordination. Do not relabel this as a 48-mouse panel.
 pcStyle=style;
 pcStyle.groups=style.groups([1 2 4]);
 pcStyle.labels=style.labels([1 2 4]);
@@ -112,7 +112,7 @@ pcStyle.colors=style.colors([1 2 4],:);
 % Recompute ASV distances and coordinates; no PERMANOVA label is displayed.
 [result.pcoa,result.axisPercent]=draw_pcoa(d.asvPercent, ...
     d.samples(d.pcoaRows,:),pcStyle,out, ...
-    ["figS4A_pcoa_groups","figS4A_pcoa_IDO1"]);
+    ["figS5_pcoa_groups","figS5_pcoa_IDO1"]);
 
 %% 7. Recompute the 1,106-ion Pearson screen in the 36 matched mice.
 m=d.samples(d.metabolomicsRows,:);
@@ -216,7 +216,7 @@ for k=1:4
     export_eps(fig,out,stems(k),style.fontSize);
 end
 disp(result.ions(candidateRows,:));
-fprintf('Figure 4/S4: seven EPS files saved in %s\n',out);
+fprintf('Figure 4/S5: seven EPS files saved in %s\n',out);
 
 
 %% 
