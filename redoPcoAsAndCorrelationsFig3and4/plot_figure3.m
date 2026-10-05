@@ -1,4 +1,4 @@
-% FIGURE 3 C-F: PCoAs, diversity associations, raw-to-partial family plot.
+% FIGURE 3 C-E: PCoAs and raw-to-partial family plot; diversity is exploratory.
 % Open this file in MATLAB and click Run. See README before editing samples.
 here=fileparts(mfilename('fullpath'));
 addpath(here);
@@ -22,7 +22,8 @@ reads=table(counts{:,1},sum(counts{:,2:end},2), ...
     'VariableNames',{'Sample_ID','Reads'});
 
 %% 2. Keep matched mice with >=1,000 reads and usable measurements.
-% This reproduces the current cohort; AVN batch selection awaits review.
+% Reconciled cohort: 54 mice; Exp3 C3/I3 excluded (no IDO1).
+% Exp7 D7 AVN4_1 and D10 AVN5_2 are included.
 minReads=1000;
 m=innerjoin(ido,q(:,{'Sample_ID','16S_qPCR_per_g'}),'Keys','Sample_ID');
 m=innerjoin(m,diversity,'Keys','Sample_ID');
@@ -148,9 +149,9 @@ title(ax,{'42-family associations: raw versus', ...
     'load/experiment-adjusted'},'FontWeight','bold');
 legend(ax,[change(1) hRaw hPartial],{'Raw-to-partial change','Raw','Partial'}, ...
     'Location','southoutside','Orientation','horizontal','Box','off','FontSize',16);
-export_eps(fig,out,'fig3F_family_raw_partial',style.fontSize);
+export_eps(fig,out,'fig3E_family_raw_partial',style.fontSize);
 
-%% 9. Inverse Simpson: raw and adjusted scatter panels (Figure 3E).
+%% 9. Exploratory inverse Simpson plots (not numbered manuscript panels).
 divRank=tiedrank(m.InverseSimpson);
 divResidual=divRank-design*(design\divRank);
 [rho,p]=corr(m.InverseSimpson,m.IDO1,'Type','Spearman');
@@ -176,13 +177,13 @@ for panel=1:2
         xlabel(ax,'Inverse Simpson diversity');
         ylabel(ax,'Colonic IDO1');
         label=sprintf('Spearman \\rho = %.3f; P = %.3f',rho,p);
-        stem='fig3E_diversity_raw';
+        stem='exploratory_diversity_raw';
     else
         scatter(ax,xx{panel},yy{panel},style.pointSize,partialColor,'filled');
         xlabel(ax,'Inverse Simpson residual rank');
         ylabel(ax,'IDO1 residual rank');
         label=sprintf('Partial Spearman \\rho = %.3f; P = %.3f',partialR,partialP);
-        stem='fig3E_diversity_partial';
+        stem='exploratory_diversity_partial';
     end
     % Straight lines aid visualization only; the annotations use rank tests.
     lineX=linspace(min(xx{panel}),max(xx{panel}),100);
