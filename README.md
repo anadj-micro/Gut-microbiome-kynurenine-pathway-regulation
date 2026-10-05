@@ -34,6 +34,3 @@ To run the numerical smoke test, add `tests/` to the MATLAB path and call
 `test_revision_workflows`. It recomputes the revised RNA-seq and supporting
 mouse workflows before checking expected statistics. R taxonomy generation is
 a separate audit; frozen assignments remain the manuscript input.
-The tissue interaction is tested only when the separately supplied original
-specimen-weight form is present; otherwise the test reports an explicit skip.
-That form is not included pending approval for public release.
